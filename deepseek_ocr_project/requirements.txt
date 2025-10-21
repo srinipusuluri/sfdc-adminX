@@ -1,0 +1,7 @@
+streamlit>=1.28.0
+torch>=2.0.0
+transformers==4.36.0
+Pillow>=10.0.0
+requests>=2.31.0
+addict>=2.4.0
+easydict>=1.13
