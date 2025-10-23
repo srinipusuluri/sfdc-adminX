@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>7 Stages of LLM Fine-Tuning</title>
+<meta name="description" content="Interactive guide to the seven stages of LLM fine-tuning: from data prep to monitoring, with common tasks and tools." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+
+<style>
+/* ===================== THEME ===================== */
+:root{
+  --bg: linear-gradient(135deg, #0f1225 0%, #1a1d3a 50%, #0d0f23 100%);
+  --card: #141835;
+  --muted: #aab1d6;
+  --text: #e9ecff;
+  --accent: #8a7dff;
+  --accent-2: #2ee7ff;
+  --accent-3: #ff6ea8;
+  --accent-4: #66e3a4;
+  --accent-5: #ffd166;
+  --accent-6: #ff6b6b;
+  --ok: #66e3a4;
+  --warn: #ffd166;
+  --danger:#ff6b6b;
+  --ring: 0 0 0 .18rem rgba(138,125,255,.4);
+  --shadow: 0 20px 40px -12px rgba(0,0,0,.45);
+  --glass: rgba(255,255,255,.08);
+  --chip: rgba(255,255,255,.12);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255,110,168,.12), transparent 60%),
+    radial-gradient(1000px 700px at 110% 0%, rgba(46,231,255,.12), transparent 60%),
+    radial-gradient(900px 500px at 50% 120%, rgba(138,125,255,.12), transparent 60%),
+    var(--bg);
+  letter-spacing:.2px;
+}
+
+/* ===================== LAYOUT ===================== */
+.container{max-width:1100px;margin:0 auto;padding:24px}
+header{
+  position:sticky;top:0;z-index:10;backdrop-filter:saturate(150%) blur(10px);
+  background:linear-gradient(to right, rgba(20,24,53,.9), rgba(20,24,53,.6));
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav{
+  display:flex;gap:14px;align-items:center;justify-content:space-between;padding:14px 24px
+}
+.brand{
+  display:flex;gap:12px;align-items:center;font-weight:800;letter-spacing:.4px
+}
+.logo{
+  inline-size:34px;block-size:34px;border-radius:10px;
+  background: conic-gradient(from 180deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
+  box-shadow: 0 6px 20px rgba(138,125,255,.35);
+}
+.kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+
+/* controls */
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.input, .select, .button{
+  background:var(--glass);border:1px solid rgba(255,255,255,.14);color:var(--text);
+  padding:10px 12px;border-radius:12px;outline:none;box-shadow:var(--shadow);
+}
+.input{min-width:230px}
+.input:focus{box-shadow:var(--ring);border-color:rgba(138,125,255,.7)}
+.select{cursor:pointer}
+.button{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;
+  transition:transform .08s ease; user-select:none;
+}
+.button:hover{transform:translateY(-1px)}
+.button.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none}
+.button.ghost{background:var(--chip)}
+
+/* hero */
+.hero{padding:26px 24px 6px}
+h1{margin:0;font-size:clamp(28px, 3vw, 40px);line-height:1.1}
+.sub{color:var(--muted);margin-top:10px;max-width:70ch}
+
+/* timeline */
+.timeline{
+  position:relative;margin:28px 0 18px;padding:18px;border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.08)
+}
+.road{
+  position:absolute;inset:0;pointer-events:none;opacity:.25;
+  background:
+    repeating-linear-gradient(
+      90deg, transparent 0 30px, rgba(255,255,255,.08) 30px 34px),
+    linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.0));
+  mask: radial-gradient(150% 100% at 50% 50%, #000 60%, transparent 80%);
+  border-radius:12px
+}
+.stage-nav{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:8px;position:relative
+}
+.stage-chip{
+  background:var(--chip);border:1px solid rgba(255,255,255,.12);
+  padding:10px;border-radius:12px;text-align:center;cursor:pointer;user-select:none;
+  font-weight:700;font-size:12px;color:var(--text);transition:all .15s ease
+}
+.stage-chip:hover{transform:translateY(-1px)}
+.stage-chip.active{
+  background:linear-gradient(135deg,var(--accent-2),var(--accent));
+  border-color:transparent;color:#0b0c18; text-shadow: 0 1px 0 rgba(255,255,255,.3)
+}
+.stage-chip.completed{
+  background:linear-gradient(135deg, var(--ok), var(--accent-4));
+  border-color:var(--ok);color:#0b0c18; text-shadow: 0 1px 0 rgba(255,255,255,.3)
+}
+.stage-chip.future{
+  background:var(--muted); opacity:0.6;
+  border-color: rgba(255,255,255,.06);
+}
+
+/* grid of cards */
+.grid{display:grid;gap:16px;grid-template-columns:repeat(12,1fr)}
+.card{
+  grid-column: span 6; background:var(--card); border:1px solid rgba(255,255,255,.1);
+  border-radius:16px; padding:16px; box-shadow:var(--shadow); position:relative; overflow:hidden;
+  animation: fadeInUp 0.6s ease-out forwards; opacity: 0; transition: all 0.3s ease;
+}
+.card:hover{
+  box-shadow: 0 30px 60px -12px rgba(0,0,0,.6), 0 0 20px var(--accent);
+  transform: translateY(-5px);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 900px){ .card{grid-column: span 12} .stage-nav{grid-template-columns:repeat(3,1fr)} }
+.card h3{margin:0 0 8px 0;display:flex;align-items:center;gap:10px}
+.badge{font-size:12px;border-radius:999px;padding:4px 8px;background:var(--chip);border:1px solid rgba(255,255,255,.14)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.tag{font-size:12px;padding:6px 8px;border-radius:9px;background:var(--chip);border:1px solid rgba(255,255,255,.12)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tool{font-size:12px;padding:6px 10px;border-radius:999px;background:linear-gradient(135deg, rgba(138,125,255,.15), rgba(46,231,255,.12));border:1px solid rgba(138,125,255,.35)}
+.card footer{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.card p{margin:6px 0;color:#d8dcff}
+
+/* modal */
+.dialog-backdrop{
+  position:fixed;inset:0;background:rgba(6,8,18,.65);backdrop-filter: blur(8px);
+  display:none;align-items:center;justify-content:center;padding:20px;z-index:50
+}
+.dialog{max-width:780px;width:100%;background:var(--card);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:18px}
+.dialog h2{margin:0 0 6px 0}
+.dialog .close{float:right}
+
+/* helpers */
+.hidden{display:none}
+.small{font-size:12px;color:var(--muted)}
+.sep{height:1px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);margin:10px 0}
+footer.site{color:var(--muted);text-align:center;padding:30px 0}
+footer.site a{color:var(--accent);text-decoration:none}
+footer.site a:hover{text-decoration:underline}
+kbd.kbd{background:#0d0f1f;border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:.2rem .45rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav container">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <div style="font-size:14px;color:var(--muted);font-weight:700;letter-spacing:.12em; text-transform:uppercase">Playbook</div>
+        <div style="font-size:18px">LLM Fine-Tuning — <span class="small">interactive</span></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input id="search" class="input" type="search" placeholder="Search stages, tasks, or tools (e.g. 'LoRA', 'wandb')" aria-label="Search" />
+      <select id="filter" class="select" aria-label="Filter by theme">
+        <option value="all">All focus areas</option>
+        <option value="data">Data</option>
+        <option value="training">Training</option>
+        <option value="eval">Evaluation</option>
+        <option value="ops">Deployment & Ops</option>
+      </select>
+      <button id="dark" class="button ghost" title="Toggle dark / light">🌗 Theme</button>
+      <button id="print" class="button primary" title="Print or save as PDF">🖨️ Export</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1>7 Stages of LLM Fine-Tuning</h1>
+    <p class="sub">A practical, clickable roadmap—from curating datasets to monitoring models in production. Use <kbd class="kbd">/</kbd> to focus search. Click a stage to dive deeper.</p>
+    <div style="margin-top:20px;padding:14px;border-radius:12px;background:linear-gradient(135deg, rgba(255,110,168,.1), rgba(138,125,255,.1));border:1px solid rgba(255,255,255,.1)">
+      <strong>Vibrant Note:</strong> Fine-tuning LLMs transforms raw potentials into specialized powers. Each stage builds upon the last, ensuring your models are not just intelligent, but precisely aligned with your unique needs. Dive in and discover the art of crafting elite AI systems!
+    </div>
+  </section>
+
+  <section class="timeline" aria-label="Stage navigation">
+    <div class="road" aria-hidden="true"></div>
+    <div id="stageNav" class="stage-nav"></div>
+  </section>
+
+  <section id="cards" class="grid" aria-live="polite"></section>
+</main>
+
+<footer class="site">
+  <p>Built with ❤️ — You can adapt the content, swap tools, or embed this on any static site host.</p>
+  <p><a href="https://github.com/srinipusuluri/vllm-deepseek-ocrv1.git" target="_blank" rel="noopener">View on GitHub</a> | <a href="https://huggingface.co/docs/transformers" target="_blank" rel="noopener">Hugging Face Transformers</a></p>
+</footer>
+
+<!-- ===================== DATA & APP ===================== -->
+<script>
+const STAGES = [
+  {
+    id:1, code:'data', title:'Data Preparation', emoji:'🧹',
+    summary:'Collect, clean, and structure high-quality datasets tailored to your model\'s objectives. Ensure diversity, balance, and relevance for optimal performance.',
+    tasks:[
+      'Identify and source appropriate datasets: public repositories (Hugging Face, Kaggle), generate synthetic data, or collect private datasets under compliance',
+      'Implement rigorous cleaning: remove duplicates, handle outliers, perform quality assurance checks, and scrub personally identifiable information (PII)',
+      'Tokenization and normalization: Convert text to tokens using model-compatible tokenizers, handle special cases like multilingual text or code',
+      'Advanced formatting: Structure data for supervised fine-tuning (SFT) as JSONL, for preference optimization (DPO/ORPO) as pairwise comparisons',
+      'Strategic splitting: Use stratified sampling to ensure train/validation/test sets represent the full data distribution'
+    ],
+    tools:['pandas','NumPy','spaCy','NLTK','Cleanlab','Datasets (🤗)','Refuel/Refinery','Label Studio','DVC','Great Expectations'],
+    commands:[
+      'pip install datasets cleanlab spacy',
+      'python -m spacy download en_core_web_sm'
+    ],
+    focus:'data',
+    links:[
+      ['Hugging Face Datasets','https://huggingface.co/docs/datasets'],
+      ['Cleanlab','https://cleanlab.ai/'],
+      ['Great Expectations','https://greatexpectations.io/']
+    ]
+  },
+  {
+    id:2, code:'init', title:'Model Initialization', emoji:'🧠',
+    summary:'Select and configure the foundational model architecture. Evaluate licenses, memory constraints, and tokenizer compatibility for seamless integration.',
+    tasks:[
+      'Select a pretrained model: Match size (7B, 13B) and capabilities to task domain (e.g., LLaMA, Mistral, GPT-J)',
+      'Implement quantization: Apply 4-bit or 8-bit quantization using bitsandbytes to reduce VRAM usage without significant quality loss',
+      'Configure tokenizer: Load compatible tokenizer, add custom special tokens if needed, and set freezing parameters for fine-tuning specific layers'
+    ],
+    tools:['PyTorch','Transformers (🤗)','TensorFlow','ONNX','bitsandbytes','Torch Hub'],
+    commands:[
+      "pip install transformers accelerate bitsandbytes",
+      "from transformers import AutoModelForCausalLM, AutoTokenizer"
+    ],
+    focus:'training',
+    links:[
+      ['Transformers Docs','https://huggingface.co/docs/transformers'],
+      ['ONNX Runtime','https://onnxruntime.ai/']
+    ]
+  },
+  {
+    id:3, code:'setup', title:'Training Setup', emoji:'⚙️',
+    summary:'Configure environment, accelerators, and hyperparameters.',
+    tasks:[
+      'Pick strategy: full FT, adapters (LoRA), PEFT, or instruction-tuning',
+      'Initialize optimizer & scheduler; choose loss (SFT, DPO, SFT+RLHF)',
+      'Distributed training (DDP/DeepSpeed/FSDP); mixed precision'
+    ],
+    tools:['PyTorch Lightning','Accelerate','DeepSpeed','FSDP','Torch.compile','Weights & Biases'],
+    commands:[
+      'accelerate config',
+      'deepspeed --num_gpus=8 train.py'
+    ],
+    focus:'training',
+    links:[
+      ['PEFT (LoRA)','https://huggingface.co/docs/peft/index'],
+      ['DeepSpeed','https://www.deepspeed.ai/']
+    ]
+  },
+  {
+    id:4, code:'finetune', title:'Fine-Tuning', emoji:'🎯',
+    summary:'Run the training loop with checkpoints & logging.',
+    tasks:[
+      'Standard SFT on curated instruction data',
+      'Parameter-Efficient FT (LoRA, QLoRA, adapters)',
+      'Domain/task-specific FT with curriculum or mixed sampling',
+      'Checkpointing, gradient accumulation, early stopping'
+    ],
+    tools:['Transformers Trainer','TRL (DPO/ORPO/RLHF)','PEFT','DeepSpeed','Optuna (search)','W&B (logging)'],
+    commands:[
+      'python sft_train.py --per_device_train_batch_size 4 --gradient_accumulation_steps 8',
+      'python dpo_train.py --beta 0.1'
+    ],
+    focus:'training',
+    links:[
+      ['TRL (HF)','https://huggingface.co/docs/trl'],
+      ['Optuna','https://optuna.org/']
+    ]
+  },
+  {
+    id:5, code:'eval', title:'Validation & Evaluation', emoji:'🧪',
+    summary:'Measure quality, robustness, and safety; tune hyperparameters.',
+    tasks:[
+      'Compute loss/accuracy and track learning curves',
+      'Evaluate with task metrics (BLEU/ROUGE/exact-match), preference models',
+      'Analyze harmful outputs, hallucinations, bias; adversarial prompts',
+      'Overfitting checks, noisy gradient detection'
+    ],
+    tools:['mlflow','Weights & Biases','scikit-learn','matplotlib','seaborn','Eleuther Eval Harness','HELM/G-Eval'],
+    commands:[
+      'mlflow ui',
+      'python evaluate.py --split validation'
+    ],
+    focus:'eval',
+    links:[
+      ['MLflow','https://mlflow.org/'],
+      ['Eleuther Eval Harness','https://github.com/EleutherAI/lm-evaluation-harness']
+    ]
+  },
+  {
+    id:6, code:'deploy', title:'Deployment', emoji:'🚀',
+    summary:'Package and serve the model with performance & safety in mind.',
+    tasks:[
+      'Choose endpoint: serverless, GPU VM, or on-prem',
+      'Compile/optimize (TensorRT, vLLM); quantize for latency',
+      'Add rate limiting, safety filters, observability, A/B flags'
+    ],
+    tools:['FastAPI','vLLM','TensorRT-LLM','Triton Inference Server','Docker','Kubernetes','NGINX','OpenAI Evals/Governor analogs'],
+    commands:[
+      'uvicorn api:app --host 0.0.0.0 --port 8080',
+      'docker build -t llm-service .'
+    ],
+    focus:'ops',
+    links:[
+      ['vLLM','https://github.com/vllm-project/vllm'],
+      ['Triton Inference Server','https://developer.nvidia.com/nvidia-triton-inference-server']
+    ]
+  },
+  {
+    id:7, code:'monitor', title:'Monitoring', emoji:'📈',
+    summary:'Track usage, cost, quality, and drift; retrain when needed.',
+    tasks:[
+      'Continuous monitoring of latency, errors, & costs',
+      'LLM-specific metrics: toxicity, hallucination rate, win-rate',
+      'Feedback loops (RAG eval, human preferences), scheduled retraining'
+    ],
+    tools:['Langfuse','Helicone','Arize','LangSmith','Evidently AI','Prometheus/Grafana'],
+    commands:[
+      'python log_events.py --sink langfuse',
+      'cron: nightly evaluation & drift check'
+    ],
+    focus:'ops',
+    links:[
+      ['Langfuse','https://langfuse.com/'],
+      ['Evidently AI','https://www.evidentlyai.com/']
+    ]
+  }
+];
+
+// --------------- DOM helpers
+const $ = (q, el=document)=>el.querySelector(q);
+const $$ = (q, el=document)=>[...el.querySelectorAll(q)];
+const el = (tag, attrs={}, children=[])=>{
+  const n = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v]) => {
+    if(k==='class') n.className=v;
+    else if(k==='html') n.innerHTML=v;
+    else n.setAttribute(k,v);
+  });
+  children.forEach(c => n.append(c));
+  return n;
+};
+
+// --------------- Render stage chips
+const stageNav = $('#stageNav');
+const cardsRoot = $('#cards');
+const filterSel = $('#filter');
+const searchInput = $('#search');
+
+const state = {
+  activeId: 1,
+  filter: 'all',
+  query: ''
+};
+
+function renderChips(){
+  stageNav.innerHTML = '';
+  STAGES.forEach(s=>{
+    const cls = 'stage-chip' + (s.id === state.activeId ? ' active' : s.id < state.activeId ? ' completed' : ' future');
+    const chip = el('button', {class:cls, 'data-id':s.id, title:`Jump to ${s.title}`}, [document.createTextNode(`${s.id}. ${s.title}`)]);
+    chip.addEventListener('click', ()=>{ state.activeId=s.id; renderChips(); scrollToCard(s.id); });
+    stageNav.append(chip);
+  });
+}
+
+function scrollToCard(id){
+  const target = $(`.card[data-id="${id}"]`);
+  if(target){ target.scrollIntoView({behavior:'smooth', block:'start'}); target.classList.add('pulse'); setTimeout(()=>target.classList.remove('pulse'), 800); }
+}
+
+// --------------- Render cards
+function renderCards(){
+  cardsRoot.innerHTML='';
+  const q = state.query.toLowerCase().trim();
+  const filtered = STAGES.filter(s=>{
+    const inFilter = state.filter==='all' ? true :
+      (state.filter==='data' && s.focus==='data') ||
+      (state.filter==='training' && s.focus==='training') ||
+      (state.filter==='eval' && s.focus==='eval') ||
+      (state.filter==='ops' && s.focus==='ops');
+    const inQuery = !q || [s.title, s.summary, ...s.tasks, ...s.tools].join(' ').toLowerCase().includes(q);
+    return inFilter && inQuery;
+  });
+
+  filtered.forEach(s=>{
+    const accentVar = s.id === 1 ? '--accent' : `--accent-${s.id}`;
+    const card = el('article', {class:'card', 'data-id':s.id, style: `border-left: 4px solid var(${accentVar});`});
+    card.append(el('h3', {}, [
+      document.createTextNode(`${s.id}. ${s.title} `),
+      el('span', {class:'badge', title:'Focus'}, [document.createTextNode(s.emoji)])
+    ]));
+    card.append(el('p', {}, [document.createTextNode(s.summary)]));
+
+    const tags = el('div', {class:'tags'});
+    s.tasks.forEach(t=> tags.append(el('span', {class:'tag'}, [document.createTextNode(t)])));
+    card.append(tags);
+
+    card.append(el('div', {class:'sep'}));
+
+    const tools = el('div', {class:'tools'});
+    s.tools.forEach(t=> tools.append(el('span', {class:'tool'}, [document.createTextNode(t)])));
+    card.append(el('div', {}, [el('strong', {}, [document.createTextNode('Tools:')])]));
+    card.append(tools);
+
+    const foot = el('footer');
+    const more = el('button', {class:'button ghost', title:'More details'}, [document.createTextNode('🔎 Details')]);
+    more.addEventListener('click', ()=> openDialog(s));
+    const copy = el('button', {class:'button ghost', title:'Copy common commands'}, [document.createTextNode('📋 Copy cmds')]);
+    copy.addEventListener('click', ()=> copyCommands(s));
+    foot.append(more, copy);
+    card.append(foot);
+
+    cardsRoot.append(card);
+  });
+
+  if(!filtered.length){
+    const empty = el('div', {class:'card', html:'<h3>Nothing found</h3><p>Try a different search term or reset the filters.</p>'});
+    empty.style.gridColumn = 'span 12';
+    cardsRoot.append(empty);
+  }
+}
+
+// --------------- Dialog
+const backdrop = el('div', {class:'dialog-backdrop', id:'backdrop'});
+const dialog = el('div', {class:'dialog'});
+backdrop.append(dialog);
+document.body.append(backdrop);
+
+function openDialog(stage){
+  dialog.innerHTML = '';
+  const close = el('button', {class:'button ghost close', title:'Close dialog'}, [document.createTextNode('✖')]);
+  close.addEventListener('click', ()=> backdrop.style.display='none');
+  dialog.append(close);
+
+  dialog.append(el('h2', {}, [document.createTextNode(`${stage.emoji} ${stage.title}`)]));
+  dialog.append(el('p', {class:'small'}, [document.createTextNode(stage.summary)]));
+
+  dialog.append(el('div', {class:'sep'}));
+  dialog.append(el('h3', {}, [document.createTextNode('Typical Tasks')]));
+  const ul = el('ul'); stage.tasks.forEach(t=> ul.append(el('li', {}, [document.createTextNode(t)]))); dialog.append(ul);
+
+  dialog.append(el('h3', {}, [document.createTextNode('Quick Commands')]));
+  const pre = el('pre', {style:'white-space:pre-wrap;background:var(--chip);padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.15)'});
+  pre.textContent = stage.commands.join('\n');
+  dialog.append(pre);
+
+  if(stage.links?.length){
+    dialog.append(el('h3', {}, [document.createTextNode('References')]));
+    const linkList = el('ul'); stage.links.forEach(([label,url])=>{
+      const a = el('a', {href:url, target:'_blank', rel:'noopener', class:'small'}, [document.createTextNode(label)]);
+      linkList.append(el('li', {}, [a]));
+    });
+    dialog.append(linkList);
+  }
+
+  backdrop.style.display='flex';
+}
+
+async function copyCommands(stage){
+  const text = stage.commands.join('\n');
+  try{
+    await navigator.clipboard.writeText(text);
+    alert(`Copied commands for “${stage.title}” ✅`);
+  }catch(e){
+    alert('Could not copy to clipboard. Select the commands and copy manually.');
+  }
+}
+
+// --------------- Events
+filterSel.addEventListener('change', e=>{ state.filter = e.target.value; renderCards(); });
+searchInput.addEventListener('input', e=>{ state.query = e.target.value; renderCards(); });
+document.addEventListener('keydown', e=>{
+  if(e.key === '/'){ e.preventDefault(); searchInput.focus(); }
+});
+$('#print').addEventListener('click', ()=> window.print());
+
+// --------------- Theme toggle (persists)
+const THEME_KEY='llm-theme';
+const root = document.documentElement;
+function setTheme(mode){
+  if(mode==='light'){
+    root.style.setProperty('--bg','#fbfbff');
+    root.style.setProperty('--card','#ffffff');
+    root.style.setProperty('--text','#0b0c18');
+    root.style.setProperty('--muted','#3a3f6b');
+    root.style.setProperty('--chip','rgba(0,0,0,.06)');
+    root.style.setProperty('--glass','rgba(0,0,0,.04)');
+    root.style.setProperty('--shadow','0 14px 30px -12px rgba(38,42,73,.2)');
+  }else{
+    // reset by reloading default :root values via removing inline overrides
+    root.style.cssText='';
+  }
+}
+$('#dark').addEventListener('click', ()=>{
+  const next = (localStorage.getItem(THEME_KEY)==='light') ? 'dark' : 'light';
+  localStorage.setItem(THEME_KEY,next); setTheme(next);
+});
+setTheme(localStorage.getItem(THEME_KEY)||'dark');
+
+// --------------- Boot
+renderChips();
+renderCards();
+</script>
+</body>
+</html>
