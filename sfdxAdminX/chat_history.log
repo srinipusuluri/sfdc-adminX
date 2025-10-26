@@ -1,0 +1,9 @@
+[2025-10-26 17:48:39] User: update user
+[2025-10-26 17:48:39] AdminX: ❌ Invalid command format: Updates are required for update operation
+--------------------------------------------------
+[2025-10-26 17:51:16] User: update user
+[2025-10-26 17:51:16] AdminX: ❌ Invalid command format: Updates are required for update operation
+--------------------------------------------------
+[2025-10-26 17:51:35] User: show user
+[2025-10-26 17:51:35] AdminX: ❌ Invalid command format: Unknown operation: show user
+--------------------------------------------------

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Agent Learning Hub — Tabs + End-to-End Project</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body{background:#0b1022;color:#e6eefc}
+  .container{max-width:1100px}
+  .nav-tabs .nav-link{color:#d6e4ff}
+  .nav-tabs .nav-link.active{background:#0e1740;border-color:#1f2b60}
+  .tab-content{background:#0e1740;border:1px solid #24306a;border-radius:12px;padding:18px;margin-top:12px}
+  a{color:#9ad1ff}
+  pre, code{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono", monospace}
+  pre{background:#0a1436;border:1px solid #1f2b60;border-radius:10px;padding:14px;white-space:pre-wrap;word-wrap:break-word}
+  .card{background:#0f1a45;border:1px solid #263478;color:#e6eefc}
+  .pill{display:inline-block;border:1px solid #2a3c80;border-radius:999px;padding:6px 10px;margin:4px 6px 0 0;background:#0d163a}
+  .muted{color:#b8c4f5}
+  .small{font-size:.95rem}
+</style>
+</head>
+<body>
+<div class="container py-4">
+  <h1 class="text-center mb-2">🧠 How to Build an AI Agent</h1>
+  <p class="text-center muted">A practical, high-school-friendly guide with tabs, links, and a full end-to-end project.</p>
+
+  <ul class="nav nav-tabs" id="tabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#p1" role="tab">1. System Prompt</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p2" role="tab">2. LLM</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p3" role="tab">3. Tools</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p4" role="tab">4. Memory</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p5" role="tab">5. Orchestration</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p6" role="tab">6. UI</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p7" role="tab">7. AI Evals</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p8" role="tab">8. End-to-End: AI Daily News Podcast</button></li>
+  </ul>
+
+  <div class="tab-content">
+
+    <!-- 1 System Prompt -->
+    <div class="tab-pane fade show active" id="p1" role="tabpanel">
+      <h2>1) System Prompt — Identity, Goals, Rules</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card p-3">
+            <h5>Basics (for beginners)</h5>
+            <p class="small">Your “instructions” to the AI. Tell it who it is, what to do, how to write, and any limits.</p>
+            <span class="pill">Role: “You are a science tutor.”</span>
+            <span class="pill">Goal: “Explain clearly + examples.”</span>
+            <span class="pill">Style: “Bullets + simple words.”</span>
+            <span class="pill">Limits: “Don’t make up facts.”</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-3">
+            <h5>Starter Template</h5>
+<pre>System: You are a helpful AI for teens.
+Goal: teach topic clearly with examples.
+Style: short paragraphs + bullet lists.
+Output: 5 bullets + 1 practice question.
+Safety: if unsure, say you’re unsure.</pre>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-3">
+            <h5>Tools/Tech</h5>
+            <ul class="small">
+              <li>Prompt templates (LangChain, LlamaIndex)</li>
+              <li>Few-shot examples, output schemas (JSON)</li>
+              <li>Guardrails (Rebuff, Guidance, “don’t answer X”)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-3">
+            <h5>Learn More</h5>
+            <ul class="small">
+              <li><a target="_blank" href="https://github.com/openai/openai-cookbook">OpenAI Cookbook</a></li>
+              <li><a target="_blank" href="https://github.com/dair-ai/Prompt-Engineering-Guide">DAIR-AI Prompt Guide</a></li>
+              <li><a target="_blank" href="https://www.youtube.com/watch?v=dOxUroR57xs">Prompt Eng for Everyone</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 LLM -->
+    <div class="tab-pane fade" id="p2" role="tabpanel">
+      <h2>2) LLM — Pick a Model & Call It</h2>
+      <div class="row g-3">
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Basics</h5>
+          <p class="small">The LLM is the “brain.” You send text, get text back. Tune creativity with <b>temperature</b>, control length with <b>max tokens</b>.</p>
+          <span class="pill">APIs (Python/JS)</span> <span class="pill">Context window</span> <span class="pill">Rate limits</span>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Popular Choices</h5>
+          <ul class="small">
+            <li>OpenAI GPT (general), Anthropic Claude (reasoning), Google Gemini (multimodal), local (Llama via Ollama)</li>
+            <li>Libraries: <a target="_blank" href="https://github.com/huggingface/transformers">Transformers</a>, <a target="_blank" href="https://github.com/langchain-ai/langchain">LangChain</a></li>
+          </ul>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>GitHub</h5>
+          <ul class="small">
+            <li><a target="_blank" href="https://github.com/openai/openai-python">OpenAI Python SDK</a></li>
+            <li><a target="_blank" href="https://github.com/jmorganca/ollama">Ollama (run local models)</a></li>
+          </ul>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>YouTube</h5>
+          <ul class="small">
+            <li><a target="_blank" href="https://www.youtube.com/watch?v=qbIk7-JPB2c">OpenAI API Tutorial</a></li>
+            <li><a target="_blank" href="https://www.youtube.com/watch?v=V8D5xLzJvMI">Run LLMs locally (Ollama)</a></li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 3 Tools -->
+    <div class="tab-pane fade" id="p3" role="tabpanel">
+      <h2>3) Tools — Let the Agent Act</h2>
+      <div class="row g-3">
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Basics</h5>
+          <p class="small">Define functions your agent can call (e.g., “search web”, “get weather”). Model chooses when to call; your code executes and returns results.</p>
+          <span class="pill">Function/tool calling</span> <span class="pill">API auth</span> <span class="pill">Retries</span>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Tech</h5>
+          <ul class="small">
+            <li>LangChain Tools, LlamaIndex Tools</li>
+            <li>Model Context Protocol (MCP) servers</li>
+            <li>HTTPX/Requests, asyncio</li>
+          </ul>
+        </div></div>
+        <div class="col-md-12"><div class="card p-3">
+          <h5>Examples</h5>
+          <ul class="small">
+            <li><a target="_blank" href="https://github.com/openai/openai-cookbook/tree/main/examples/How_to_call_functions_with_chat_models">Function-calling examples</a></li>
+            <li><a target="_blank" href="https://github.com/langchain-ai/langchain/blob/master/cookbook/function_calling.ipynb">LangChain tool-calling</a></li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 4 Memory -->
+    <div class="tab-pane fade" id="p4" role="tabpanel">
+      <h2>4) Memory — RAG & History</h2>
+      <div class="row g-3">
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Basics</h5>
+          <p class="small">Short-term: chat history. Long-term: save facts in a <b>vector DB</b> (embeddings) or SQL. RAG = retrieve facts → feed to LLM.</p>
+          <span class="pill">Embeddings</span> <span class="pill">Chunking</span> <span class="pill">Citations</span>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Tech</h5>
+          <ul class="small">
+            <li>Chroma, Pinecone, Weaviate, Milvus, FAISS</li>
+            <li>Redis/SQLite/Postgres</li>
+            <li>LangChain / LlamaIndex RAG pipelines</li>
+          </ul>
+        </div></div>
+        <div class="col-md-12"><div class="card p-3">
+          <h5>Learn</h5>
+          <ul class="small">
+            <li><a target="_blank" href="https://github.com/chroma-core/chroma">Chroma</a>, <a target="_blank" href="https://github.com/run-llama/llama_index">LlamaIndex</a></li>
+            <li><a target="_blank" href="https://www.youtube.com/watch?v=j2H8Lezsl6o">RAG for beginners</a></li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 5 Orchestration -->
+    <div class="tab-pane fade" id="p5" role="tabpanel">
+      <h2>5) Orchestration — Multi-Step Flows</h2>
+      <div class="row g-3">
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Basics</h5>
+          <p class="small">Define a route: “If question about docs → run RAG; else → answer directly.” Add retries, queues, and schedules.</p>
+          <span class="pill">State graphs</span> <span class="pill">Schedulers</span> <span class="pill">Task queues</span>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Tech</h5>
+          <ul class="small">
+            <li>LangGraph, Temporal, Airflow/Prefect</li>
+            <li>Celery/RQ, cron, APScheduler</li>
+          </ul>
+        </div></div>
+        <div class="col-md-12"><div class="card p-3">
+          <h5>Repos & Videos</h5>
+          <ul class="small">
+            <li><a target="_blank" href="https://github.com/langchain-ai/langgraph">LangGraph</a> (examples folder)</li>
+            <li><a target="_blank" href="https://www.youtube.com/watch?v=5pF39nF2qjQ">LangGraph crash course</a></li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 6 UI -->
+    <div class="tab-pane fade" id="p6" role="tabpanel">
+      <h2>6) UI — Web, Chat, or App</h2>
+      <div class="row g-3">
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Basics</h5>
+          <p class="small">Start with a simple chat page. Show the answer, any tool calls, and citations. Add “Clear memory” and “Retry”.</p>
+          <span class="pill">Streamlit/Gradio</span> <span class="pill">React/Next.js</span> <span class="pill">Flask/FastAPI</span>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Repos & Tutorials</h5>
+          <ul class="small">
+            <li><a target="_blank" href="https://github.com/mckaywrigley/chatbot-ui">Chatbot-UI</a>, <a target="_blank" href="https://github.com/gradio-app/gradio">Gradio</a></li>
+            <li><a target="_blank" href="https://www.youtube.com/watch?v=3UOyky9sEQY">Streamlit AI Chatbot</a></li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 7 Evals -->
+    <div class="tab-pane fade" id="p7" role="tabpanel">
+      <h2>7) AI Evals — Measure & Improve</h2>
+      <div class="row g-3">
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Basics</h5>
+          <p class="small">Keep 20–50 “golden” questions. After each change, re-run and compare accuracy, latency, and cost.</p>
+          <span class="pill">Golden set</span> <span class="pill">Regression tests</span> <span class="pill">A/B experiments</span>
+        </div></div>
+        <div class="col-md-6"><div class="card p-3">
+          <h5>Tools</h5>
+          <ul class="small">
+            <li>DeepEval / TruLens / LangSmith</li>
+            <li>Weights & Biases (tracking)</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- 8 End-to-End -->
+    <div class="tab-pane fade" id="p8" role="tabpanel">
+      <h2>8) End-to-End Project — AI Daily News Podcast (YouTube + Slack)</h2>
+      <p class="muted small">Pipeline: fetch AI news → summarize with LLM → TTS → video (use a Canva background) → upload to YouTube (channel “ai-for-all”) → post summary to Slack at 8:00 AM → Slack bot answers follow-ups using stored articles.</p>
+
+      <div class="card p-3 mb-3">
+        <h5>Architecture (simple)</h5>
+        <ul class="small">
+          <li><b>News</b>: fetch top AI headlines via RSS/APIs (e.g., feedparser).</li>
+          <li><b>Summarize</b>: call an LLM to create a 2–3 min script + show notes.</li>
+          <li><b>Audio</b>: text-to-speech → MP3.</li>
+          <li><b>Video</b>: use a Canva-designed static background (export PNG) + MoviePy to make an audiogram MP4.</li>
+          <li><b>Upload</b>: YouTube Data API → upload video (title, description, tags) to channel <i>ai-for-all</i>.</li>
+          <li><b>Share</b>: Slack Incoming Webhook → morning post with bullets + video link.</li>
+          <li><b>Chat</b>: Slack Bot (Bolt for Python) → answer “tell me more” using the same day’s stored articles + LLM.</li>
+        </ul>
+        <p class="small"><b>Note on Canva:</b> Canva doesn’t currently offer a public “render this design to file” API for automation. Use Canva to design a reusable background & thumbnail template, export them once (PNG/JPG), and the script below uses those exported assets when it builds the video automatically each day.</p>
+      </div>
+
+      <div class="card p-3">
+        <h5>One-File Demo (Python)</h5>
+        <p class="small">Create <code>.env</code> with your keys, install deps, then run. This version uses: <code>feedparser</code>, <code>openai</code> (or compatible LLM), <code>gTTS</code> (simple TTS), <code>moviepy</code>, <code>google-api-python-client</code>, <code>slack_sdk</code>, <code>APScheduler</code>.</p>
+
+<pre># ---------- requirements.txt ----------
+feedparser
+openai>=1.30.0
+python-dotenv
+gTTS
+moviepy
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+slack_sdk
+APScheduler
+requests
+
+# ---------- .env (fill these) ----------
+OPENAI_API_KEY=sk-...
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/XXX/YYY/ZZZ
+SLACK_BOT_TOKEN=xoxb-...
+SLACK_APP_TOKEN=xapp-...           # for Socket Mode (Slack bot, optional)
+SLACK_CHANNEL_ID=C0123456789
+YOUTUBE_CLIENT_SECRETS=client_secret.json   # path to OAuth client file
+CANVA_BG_IMAGE=assets/canva_bg.png          # exported from Canva
+CANVA_THUMBNAIL=assets/thumbnail.png        # exported from Canva
+YOUTUBE_CATEGORY_ID=28                      # Science & Technology
+TIMEZONE=America/Chicago
+
+# ---------- project.py ----------
+import os, io, time, json, textwrap, datetime, tempfile
+from pathlib import Path
+from dotenv import load_dotenv
+import feedparser, requests
+from gtts import gTTS
+from moviepy.editor import ImageClip, AudioFileClip
+from slack_sdk.webhook import WebhookClient
+from slack_sdk import WebClient
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+
+# LLM (OpenAI-style)
+from openai import OpenAI
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# --------- Config
+TZ = os.getenv("TIMEZONE","America/Chicago")
+SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
+SLACK_CHANNEL_ID = os.getenv("SLACK_CHANNEL_ID")
+CANVA_BG = Path(os.getenv("CANVA_BG_IMAGE","assets/canva_bg.png"))
+THUMB = Path(os.getenv("CANVA_THUMBNAIL","assets/thumbnail.png"))
+YOUTUBE_CATEGORY_ID = os.getenv("YOUTUBE_CATEGORY_ID","28")
+NEWS_FEEDS = [
+  "https://news.ycombinator.com/rss",
+  "https://www.theverge.com/rss/index.xml",
+  "https://www.technologyreview.com/feed/",
+  "https://www.semianalysis.com/feed",
+]
+# Add AI-specific feeds if available to you.
+
+def fetch_headlines(limit=8):
+    items=[]
+    for url in NEWS_FEEDS:
+        try:
+            d=feedparser.parse(url)
+            for e in d.entries[:limit]:
+                items.append({
+                  "title": e.get("title",""),
+                  "link": e.get("link",""),
+                  "summary": e.get("summary","")[:500]
+                })
+        except Exception as e:
+            print("Feed error", url, e)
+    # de-dupe by title
+    seen=set(); uniq=[]
+    for it in items:
+        t=it["title"].strip()
+        if t and t not in seen:
+            seen.add(t); uniq.append(it)
+    return uniq[:12]
+
+def llm_summarize(items):
+    bullet_source = "\n".join([f"- {i['title']} — {i['link']}" for i in items])
+    prompt = f"""
+Summarize today's AI/tech news into:
+1) a 300-400 word spoken script for a friendly daily podcast (teen-friendly, clear).
+2) 5 short bullet points with one-sentence explanations.
+3) a YouTube description with links.
+
+News (raw):
+{bullet_source}
+"""
+    resp = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role":"system","content":"You are a concise tech news editor."},
+                  {"role":"user","content":prompt}],
+        temperature=0.5,
+    )
+    return resp.choices[0].message.content
+
+def split_sections(text):
+    # Very simple parsing
+    parts = {"script":"", "bullets":"", "description":""}
+    low = text.lower()
+    # naive splits
+    if "2)" in low and "3)" in low:
+        s2 = low.index("2)")
+        s3 = low.index("3)")
+        parts["script"]=text[:s2].strip()
+        parts["bullets"]=text[s2:s3].strip()
+        parts["description"]=text[s3:].strip()
+    else:
+        # fallback: first 350 words = script
+        words=text.split()
+        parts["script"]=" ".join(words[:350])
+        parts["bullets"]="• " + "\n• ".join([" ".join(words[350:420])])
+        parts["description"]="Daily AI news roundup."
+    return parts
+
+def synthesize_tts(script_text, out_mp3):
+    tts = gTTS(text=script_text, lang="en")
+    tts.save(out_mp3)
+    return out_mp3
+
+def build_video(bg_image, audio_mp3, out_mp4, title_text="AI Daily News"):
+    audio = AudioFileClip(audio_mp3)
+    img = ImageClip(str(bg_image)).set_duration(audio.duration)
+    # simple fadein/out
+    video = img.set_audio(audio).fadein(0.5).fadeout(0.8)
+    video.write_videofile(out_mp4, fps=30, codec="libx264", audio_codec="aac", temp_audiofile="temp-audio.m4a", remove_temp=True)
+    return out_mp4
+
+# ---- YouTube Auth/Upload (first run will open a browser for OAuth)
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+def yt_service():
+    creds = None
+    token_path = Path("token.json")
+    if token_path.exists():
+        creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(os.getenv("YOUTUBE_CLIENT_SECRETS","client_secret.json"), SCOPES)
+            creds = flow.run_local_server(port=0)
+        token_path.write_text(creds.to_json())
+    return build("youtube","v3",credentials=creds)
+
+def yt_upload(video_path, title, description, category_id="28", privacy="public", thumb_path=None):
+    yt = yt_service()
+    body = {
+      "snippet": {"title": title, "description": description, "categoryId": category_id},
+      "status": {"privacyStatus": privacy}
+    }
+    media = MediaFileUpload(video_path, chunksize=-1, resumable=True, mimetype="video/*")
+    request = yt.videos().insert(part="snippet,status", body=body, media_body=media)
+    response = None
+    while response is None:
+        status, response = request.next_chunk()
+        if status: print(f"Upload {int(status.progress()*100)}%")
+    video_id = response["id"]
+    if thumb_path and Path(thumb_path).exists():
+        yt.thumbnails().set(videoId=video_id, media_body=thumb_path).execute()
+    return f"https://www.youtube.com/watch?v={video_id}"
+
+# ---- Slack
+def slack_post(text):
+    if not SLACK_WEBHOOK_URL: return
+    WebhookClient(SLACK_WEBHOOK_URL).send(text=text)
+
+def slack_blocks(title, bullets, url):
+    return {
+      "channel": SLACK_CHANNEL_ID,
+      "text": title,
+      "blocks": [
+        {"type":"header","text":{"type":"plain_text","text":title}},
+        {"type":"section","text":{"type":"mrkdwn","text":bullets}},
+        {"type":"actions","elements":[
+          {"type":"button","text":{"type":"plain_text","text":"▶ Watch on YouTube"},"url":url}
+        ]},
+        {"type":"context","elements":[{"type":"mrkdwn","text":"Reply in thread: ask for more details on any bullet (Slack bot answers)."}]}
+      ]
+    }
+
+def run_pipeline():
+    today = datetime.datetime.now().strftime("%B %d, %Y")
+    print("Fetching news...")
+    items = fetch_headlines()
+    print(f"Fetched {len(items)} items")
+
+    print("Summarizing...")
+    summary = llm_summarize(items)
+    parts = split_sections(summary)
+    script = parts["script"]
+    bullets = parts["bullets"]
+    description = parts["description"] + "\n\nSources:\n" + "\n".join([f"- {i['title']} — {i['link']}" for i in items])
+
+    # Audio
+    tmp_dir = Path("out"); tmp_dir.mkdir(exist_ok=True)
+    mp3 = str(tmp_dir / "podcast.mp3")
+    mp4 = str(tmp_dir / "podcast.mp4")
+    print("Synthesizing TTS...")
+    synthesize_tts(script, mp3)
+
+    # Video
+    print("Building video...")
+    build_video(CANVA_BG, mp3, mp4, title_text=f"AI Daily News — {today}")
+
+    # YouTube
+    print("Uploading to YouTube...")
+    title = f"AI Daily News — {today}"
+    url = yt_upload(mp4, title, description, category_id=YOUTUBE_CATEGORY_ID, thumb_path=str(THUMB) if THUMB.exists() else None)
+    print("YouTube URL:", url)
+
+    # Slack
+    print("Posting to Slack...")
+    bullets_md = "• " + "\n• ".join([b.strip(" -•") for b in bullets.splitlines() if b.strip()][:6])
+    wc = WebClient(token=os.getenv("SLACK_BOT_TOKEN"))
+    wc.chat_postMessage(**slack_blocks(title, bullets_md, url))
+    print("Done.")
+
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--once", action="store_true", help="Run immediately one time")
+    args = parser.parse_args()
+
+    if args.once:
+        run_pipeline()
+    else:
+        # Schedule every day at 8:00 AM America/Chicago
+        sched = BlockingScheduler(timezone=TZ)
+        sched.add_job(run_pipeline, CronTrigger(hour=8, minute=0))
+        print("Scheduler started (daily 8:00 AM). Press Ctrl+C to stop.")
+        sched.start()
+
+# ---------- OPTIONAL: Slack Bot for Q&A (bolt-like, minimal WebClient polling) ----------
+# In production, use slack_bolt (Socket Mode). Here we show a minimal pattern:
+#   pip install slack_bolt
+#   SLACK_APP_TOKEN, SLACK_BOT_TOKEN must be set.
+#
+# from slack_bolt.adapter.socket_mode import SocketModeHandler
+# from slack_bolt import App
+# app = App(token=os.getenv("SLACK_BOT_TOKEN"))
+# @app.message(re.compile("(more|details|explain)", re.I))
+# def handle_more(message, say):
+#     user_q = message["text"]
+#     # Use stored items + LLM for deeper answer:
+#     items = fetch_headlines()  # or persist yesterday's items to a JSON file
+#     context = "\n".join([f"- {i['title']}: {i['summary']} ({i['link']})" for i in items])
+#     resp = client.chat.completions.create(
+#         model="gpt-4o-mini",
+#         messages=[{"role":"system","content":"You expand AI news with citations."},
+#                   {"role":"user","content":f"Question: {user_q}\nUse only this context:\n{context}"}]
+#     )
+#     say(resp.choices[0].message.content)
+# if __name__ == "__main__": SocketModeHandler(app, os.getenv("SLACK_APP_TOKEN")).start()
+</pre>
+
+        <h5 class="mt-3">Run It</h5>
+        <ol class="small">
+          <li>Create a Canva background & thumbnail for your show (“AI Daily News”) → export as <code>assets/canva_bg.png</code> and <code>assets/thumbnail.png</code>.</li>
+          <li>Create a YouTube channel named <b>ai-for-all</b>. In Google Cloud Console, enable YouTube Data API v3, create OAuth Client (Desktop), download as <code>client_secret.json</code> into the project folder.</li>
+          <li>Install: <code>python -m venv .venv && source .venv/bin/activate</code> (or Windows equivalent) then <code>pip install -r requirements.txt</code>.</li>
+          <li>Fill <code>.env</code> (Slack webhook & bot token, OpenAI key, paths, etc.).</li>
+          <li>Test once: <code>python project.py --once</code> (first time will open a browser to grant YouTube upload access).</li>
+          <li>Schedule: run <code>python project.py</code> and keep it on (server/VM). Or use system <code>cron</code>.</li>
+          <li>Slack Q&amp;A bot: install <code>slack_bolt</code>, then run the optional bot code (separate process) for interactive follow-ups.</li>
+        </ol>
+
+        <h5>Troubleshooting Tips</h5>
+        <ul class="small">
+          <li><b>Audio too fast?</b> Try different TTS (e.g., ElevenLabs API) or use <code>gTTS</code> slow mode.</li>
+          <li><b>Video size?</b> MoviePy uses <code>libx264</code>; if missing, install ffmpeg (macOS: <code>brew install ffmpeg</code>).</li>
+          <li><b>YouTube quota errors?</b> Try later; keep video < 128GB; add category/tags; verify the channel.</li>
+          <li><b>Slack not posting?</b> Confirm the webhook URL/channel permissions; for bot replies, the app needs <code>chat:write</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="text-center mt-4 muted small">Tip: fork this into a small GitHub repo and add a README with screenshots of your Canva template, YouTube upload screen, and Slack channel.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
